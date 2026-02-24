@@ -8,7 +8,7 @@ local MainTab = Window:MakeTab({
 })
 
 MainTab:AddSlider({
-	Name = "WalkSpeed",
+	Name = "Speed",
 	Min = 16,
 	Max = 250,
 	Default = 16,
@@ -35,18 +35,12 @@ MainTab:AddButton({
 })
 
 MainTab:AddButton({
-	Name = "Check Murderer",
+	Name = "Check Roles",
 	Callback = function()
         for _, v in pairs(game.Players:GetPlayers()) do
             if v.Backpack:FindFirstChild("Knife") or (v.Character and v.Character:FindFirstChild("Knife")) then
-                OrionLib:MakeNotification({
-                    Name = "Murderer Found!",
-                    Content = v.Name .. " is the killer!",
-                    Time = 5
-                })
+                OrionLib:MakeNotification({Name = "Murderer!", Content = v.Name, Time = 5})
             end
         end
 	end    
 })
-
-OrionLib:Init()
