@@ -1,32 +1,37 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu'))()
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com')))()
 
-local Window = Rayfield:CreateWindow({
-   Name = "Awesome Hub",
-   LoadingTitle = "Loading...",
-   LoadingSubtitle = "by Awesome Crack",
-   KeySystem = false
+local Window = OrionLib:MakeWindow({Name = "Awesome Hub MM2", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
+
+local Tab = Window:MakeTab({
+	Name = "Main",
+	Icon = "rbxassetid://4483345998",
+	PremiumOnly = false
 })
 
-local Tab = Window:CreateTab("Main", nil)
-
-Tab:CreateSlider({
-   Name = "WalkSpeed",
-   Range = {16, 200},
-   Increment = 1,
-   CurrentValue = 16,
-   Callback = function(Value)
-      game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
-   end,
+Tab:AddSlider({
+	Name = "Speed",
+	Min = 16,
+	Max = 250,
+	Default = 16,
+	Color = Color3.fromRGB(255,255,255),
+	Increment = 1,
+	ValueName = "spd",
+	Callback = function(Value)
+		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+	end    
 })
 
-Tab:CreateButton({
-   Name = "ESP",
-   Callback = function()
-      for _, v in pairs(game.Players:GetPlayers()) do
-         if v ~= game.Players.LocalPlayer and v.Character then
-            Instance.new("Highlight", v.Character)
-         end
-      end
-   end,
+Tab:AddButton({
+	Name = "ESP Players",
+	Callback = function()
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= game.Players.LocalPlayer and v.Character then
+                if not v.Character:FindFirstChild("Highlight") then
+                    Instance.new("Highlight", v.Character)
+                end
+            end
+        end
+	end    
 })
 
+OrionLib:Init()
