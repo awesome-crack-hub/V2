@@ -1,201 +1,50 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu'))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "AWESOME HUB [AC] | Murder Mystery 2",
-   LoadingTitle = "Awesome Crack Edition",
-   LoadingSubtitle = "by Awesome Hub",
+   Name = "Awesome Hub MM2",
+   LoadingTitle = "Loading...",
+   LoadingSubtitle = "by Awesome Crack",
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = "AwesomeHubAC",
-      FileName = "MM2Config"
+      FolderName = "AwesomeHubData",
+      FileName = "Config"
    },
    KeySystem = false
 })
 
-local Combat = Window:CreateTab("Combat", 4483362458)
-local Visuals = Window:CreateTab("Visuals", 4483362458)
-local World = Window:CreateTab("World", 4483362458)
-local Misc = Window:CreateTab("Misc", 4483362458)
+local Tab = Window:CreateTab("Main", nil)
 
-Combat:CreateSection("Murderer Tools")
-
-Combat:CreateToggle({
-   Name = "Hitbox Expander (10)",
-   CurrentValue = false,
-   Flag = "Hitbox1",
+Tab:CreateSection("Movement")
+Tab:CreateSlider({
+   Name = "WalkSpeed",
+   Range = {16, 200},
+   Increment = 1,
+   CurrentValue = 16,
    Callback = function(Value)
-      _G.Hitbox = Value
-      game:GetService("RunService").RenderStepped:Connect(function()
-         if _G.Hitbox then
-            for _, v in pairs(game.Players:GetPlayers()) do
-               if v ~= game.Players.LocalPlayer and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                  local r = v.Character.HumanoidRootPart
-                  r.Size, r.Transparency, r.CanCollide = Vector3.new(10,10,10), 0.8, false
-               end
-            end
-         end
-      end)
+      game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
    end,
 })
 
-Combat:CreateToggle({
-   Name = "Knife Silent Aim",
-   CurrentValue = false,
-   Flag = "KnifeAim",
-   Callback = function(Value)
-      _G.KAim = Value
-      spawn(function()
-         while _G.KAim do task.wait()
-            local k = game.Players.LocalPlayer.Character:FindFirstChild("Knife")
-            if k and k:FindFirstChild("Throw") then
-               for _,v in pairs(game.Players:GetPlayers()) do
-                  if v ~= game.Players.LocalPlayer and v.Character and (v.Character.HumanoidRootPart.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude < 40 then
-                     k.Throw:FireServer(v.Character.HumanoidRootPart.Position)
-                  end
-               end
-            end
-         end
-      end)
-   end,
-})
-
-Combat:CreateButton({
-   Name = "Fake Bomb Button (Clutch)",
+Tab:CreateSection("Game")
+Tab:CreateButton({
+   Name = "ESP Players",
    Callback = function()
-      local b = game.Players.LocalPlayer.Backpack:FindFirstChildWhichIsA("Tool") or game.Players.LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
-      if b and (b.Name:find("Bomb") or b.Name:find("Toy")) then
-         game.Players.LocalPlayer.Character.Humanoid:EquipTool(b)
-         task.wait(0.01)
-         b:Activate()
-         game.Players.LocalPlayer.Character.Humanoid.Jump = true
-      end
-   end,
-})
-
-Combat:CreateSection("Sheriff Tools")
-
-Combat:CreateToggle({
-   Name = "Gun Silent Aim (Murd Only)",
-   CurrentValue = false,
-   Flag = "GunAim",
-   Callback = function(Value)
-      _G.GAim = Value
-      spawn(function()
-         while _G.GAim do task.wait()
-            local g = game.Players.LocalPlayer.Character:FindFirstChild("Gun")
-            if g then
-               for _,v in pairs(game.Players:GetPlayers()) do
-                  if (v.Backpack:FindFirstChild("Knife") or v.Character:FindFirstChild("Knife")) and v.Character then
-                     g.Shoot:FireServer(v.Character.HumanoidRootPart.Position)
-                  end
-               end
-            end
-         end
-      end)
-   end,
-})
-
-Combat:CreateButton({
-   Name = "Shoot Murderer Button",
-   Callback = function()
-      local m = nil
       for _, v in pairs(game.Players:GetPlayers()) do
-         if v.Backpack:FindFirstChild("Knife") or v.Character:FindFirstChild("Knife") then m = v.Character end
+         if v ~= game.Players.LocalPlayer and v.Character then
+            local hl = Instance.new("Highlight", v.Character)
+            hl.FillTransparency = 0.5
+         end
       end
-      local g = game.Players.LocalPlayer.Character:FindFirstChild("Gun")
-      if g and m then g.Shoot:FireServer(m.HumanoidRootPart.Position) end
    end,
 })
 
-Visuals:CreateSection("ESP & Alerts")
-
-Visuals:CreateToggle({
-   Name = "Player ESP (Roles)",
-   CurrentValue = false,
-   Flag = "ESP1",
-   Callback = function(Value)
-      _G.ESP = Value
-      spawn(function()
-         while _G.ESP do
-            for _, v in pairs(game.Players:GetPlayers()) do
-               if v ~= game.Players.LocalPlayer and v.Character then
-                  local h = v.Character:FindFirstChild("Highlight") or Instance.new("Highlight", v.Character)
-                  local m = v.Backpack:FindFirstChild("Knife") or v.Character:FindFirstChild("Knife")
-                  local s = v.Backpack:FindFirstChild("Gun") or v.Character:FindFirstChild("Gun")
-                  h.FillColor = m and Color3.new(1,0,0) or (s and Color3.new(0,0,1) or Color3.new(0,1,0))
-               end
-            end
-            task.wait(1)
-         end
-      end)
-   end,
-})
-
-Visuals:CreateToggle({
-   Name = "Gun ESP (Dropped)",
-   CurrentValue = false,
-   Flag = "GESP",
-   Callback = function(Value)
-      _G.GESP = Value
-      spawn(function()
-         while _G.GESP do
-            local d = workspace:FindFirstChild("GunDrop") or workspace:FindFirstChild("Pickup")
-            if d then
-               local h = d:FindFirstChild("Highlight") or Instance.new("Highlight", d)
-               h.FillColor = Color3.new(1,1,0)
-            end
-            task.wait(1)
-         end
-      end)
-   end,
-})
-
-World:CreateSection("Teleports & Farm")
-
-World:CreateButton({
-   Name = "Grab Gun Button",
+Tab:CreateButton({
+   Name = "Check Roles",
    Callback = function()
-      if game.Players.LocalPlayer.Backpack:FindFirstChild("Knife") or game.Players.LocalPlayer.Character:FindFirstChild("Knife") then return end
-      local d = workspace:FindFirstChild("GunDrop") or workspace:FindFirstChild("Pickup")
-      if d then game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = d:IsA("BasePart") and d.CFrame or d:FindFirstChildWhichIsA("BasePart").CFrame end
-   end,
-})
-
-World:CreateToggle({
-   Name = "Auto Coin Farm (Safe)",
-   CurrentValue = false,
-   Flag = "CoinFarm",
-   Callback = function(Value)
-      _G.Farm = Value
-      spawn(function()
-         while _G.Farm do
-            for _,v in pairs(workspace:GetChildren()) do
-               if v.Name == "CoinContainer" then
-                  for _,c in pairs(v:GetChildren()) do
-                     if _G.Farm and c:IsA("BasePart") then
-                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = c.CFrame
-                        task.wait(0.3)
-                     end
-                  end
-               end
-            end
-            task.wait(1)
+      for _, v in pairs(game.Players:GetPlayers()) do
+         if v.Backpack:FindFirstChild("Knife") or (v.Character and v.Character:FindFirstChild("Knife")) then
+            Rayfield:Notify({Title = "Role", Content = v.Name .. " is Murderer!"})
          end
-      end)
-   end,
-})
-
-Misc:CreateSection("Stability")
-
-Misc:CreateButton({
-   Name = "Anti-AFK (Stay Active)",
-   Callback = function()
-      local vu = game:GetService("VirtualUser")
-      game:GetService("Players").LocalPlayer.Idled:connect(function()
-         vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-         wait(1)
-         vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-      end)
-      Rayfield:Notify({Title = "Misc", Content = "Anti-AFK Enabled!", Duration = 3})
+      end
    end,
 })
