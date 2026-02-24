@@ -1,46 +1,47 @@
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com')))()
-local Window = OrionLib:MakeWindow({Name = "Awesome Hub | MM2", HidePremium = false, SaveConfig = true, ConfigFolder = "DeltaMM2"})
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 200, 0, 250)
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -125)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Active = true
+MainFrame.Draggable = true
 
-local MainTab = Window:MakeTab({
-	Name = "Main",
-	Icon = "rbxassetid://4483345998",
-	PremiumOnly = false
-})
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Text = "AWESOME HUB MM2"
+Title.TextColor3 = Color3.new(1, 1, 1)
+Title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 
-MainTab:AddSlider({
-	Name = "Speed",
-	Min = 16,
-	Max = 250,
-	Default = 16,
-	Color = Color3.fromRGB(255,255,255),
-	Increment = 1,
-	ValueName = "Speed",
-	Callback = function(Value)
-		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
-	end    
-})
+local function CreateBtn(name, pos, callback)
+    local btn = Instance.new("TextButton", MainFrame)
+    btn.Size = UDim2.new(0.9, 0, 0, 40)
+    btn.Position = UDim2.new(0.05, 0, 0, pos)
+    btn.Text = name
+    btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.MouseButton1Click:Connect(callback)
+end
 
-MainTab:AddButton({
-	Name = "ESP Players",
-	Callback = function()
-        for _, v in pairs(game.Players:GetPlayers()) do
-            if v ~= game.Players.LocalPlayer and v.Character then
-                if not v.Character:FindFirstChild("Highlight") then
-                    local hl = Instance.new("Highlight", v.Character)
-                    hl.FillTransparency = 0.5
-                end
-            end
+CreateBtn("Speed (100)", 50, function() 
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100 
+end)
+
+CreateBtn("ESP Players", 100, function()
+    for _, v in pairs(game.Players:GetPlayers()) do
+        if v ~= game.Players.LocalPlayer and v.Character then
+            local hl = Instance.new("Highlight", v.Character)
+            hl.FillColor = Color3.new(1, 0, 0)
         end
-	end    
-})
+    end
+end)
 
-MainTab:AddButton({
-	Name = "Check Roles",
-	Callback = function()
-        for _, v in pairs(game.Players:GetPlayers()) do
-            if v.Backpack:FindFirstChild("Knife") or (v.Character and v.Character:FindFirstChild("Knife")) then
-                OrionLib:MakeNotification({Name = "Murderer!", Content = v.Name, Time = 5})
-            end
+CreateBtn("Find Murder", 150, function()
+    for _, v in pairs(game.Players:GetPlayers()) do
+        if v.Backpack:FindFirstChild("Knife") or (v.Character and v.Character:FindFirstChild("Knife")) then
+            print("Murderer: " .. v.Name)
+            game.StarterGui:SetCore("SendNotification", {Title = "FOUND!", Text = v.Name})
         end
-	end    
-})
+    end
+end)
+
+CreateBtn("Close Hub", 200, function() ScreenGui:Destroy() end)
