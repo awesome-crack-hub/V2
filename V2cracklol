@@ -1,47 +1,65 @@
+-- Авто-очистка кэша для Delta
+local raw_url = "https://raw.githubusercontent.com"
+local script_code = game:HttpGet(raw_url .. "?t=" .. tick())
+
+-- Создаем интерфейс (GUI)
 local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
 local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 200, 0, 250)
-MainFrame.Position = UDim2.new(0.5, -100, 0.5, -125)
-MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+MainFrame.Size = UDim2.new(0, 220, 0, 280)
+MainFrame.Position = UDim2.new(0.5, -110, 0.5, -140)
+MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MainFrame.BorderSizePixel = 2
 MainFrame.Active = true
-MainFrame.Draggable = true
+MainFrame.Draggable = true -- Можно двигать пальцем
 
 local Title = Instance.new("TextLabel", MainFrame)
-Title.Size = UDim2.new(1, 0, 0, 30)
-Title.Text = "AWESOME HUB MM2"
+Title.Size = UDim2.new(1, 0, 0, 40)
+Title.Text = "AWESOME HUB [DELTA]"
 Title.TextColor3 = Color3.new(1, 1, 1)
-Title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+Title.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Title.Font = Enum.Font.SourceSansBold
+Title.TextSize = 18
 
-local function CreateBtn(name, pos, callback)
+-- Функция для кнопок
+local function AddButton(text, yPos, color, callback)
     local btn = Instance.new("TextButton", MainFrame)
-    btn.Size = UDim2.new(0.9, 0, 0, 40)
-    btn.Position = UDim2.new(0.05, 0, 0, pos)
-    btn.Text = name
-    btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+    btn.Size = UDim2.new(0.9, 0, 0, 45)
+    btn.Position = UDim2.new(0.05, 0, 0, yPos)
+    btn.Text = text
+    btn.BackgroundColor3 = color
     btn.TextColor3 = Color3.new(1, 1, 1)
+    btn.Font = Enum.Font.SourceSans
+    btn.TextSize = 16
     btn.MouseButton1Click:Connect(callback)
 end
 
-CreateBtn("Speed (100)", 50, function() 
-    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100 
+-- КНОПКИ ФУНКЦИЙ
+AddButton("⚡ SPEED x100", 55, Color3.fromRGB(60, 60, 150), function()
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100
 end)
 
-CreateBtn("ESP Players", 100, function()
+AddButton("👁️ ESP (ПОДСВЕТКА)", 110, Color3.fromRGB(60, 150, 60), function()
     for _, v in pairs(game.Players:GetPlayers()) do
         if v ~= game.Players.LocalPlayer and v.Character then
             local hl = Instance.new("Highlight", v.Character)
             hl.FillColor = Color3.new(1, 0, 0)
+            hl.OutlineColor = Color3.new(1, 1, 1)
         end
     end
 end)
 
-CreateBtn("Find Murder", 150, function()
+AddButton("🔍 КТО УБИЙЦА?", 165, Color3.fromRGB(150, 60, 60), function()
     for _, v in pairs(game.Players:GetPlayers()) do
         if v.Backpack:FindFirstChild("Knife") or (v.Character and v.Character:FindFirstChild("Knife")) then
-            print("Murderer: " .. v.Name)
-            game.StarterGui:SetCore("SendNotification", {Title = "FOUND!", Text = v.Name})
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "УБИЙЦА НАЙДЕН!",
+                Text = "Это: " .. v.Name,
+                Duration = 10
+            })
         end
     end
 end)
 
-CreateBtn("Close Hub", 200, function() ScreenGui:Destroy() end)
+AddButton("❌ ЗАКРЫТЬ", 220, Color3.fromRGB(40, 40, 40), function()
+    ScreenGui:Destroy()
+end)
