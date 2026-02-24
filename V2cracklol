@@ -1,34 +1,49 @@
 local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com')))()
+local Window = OrionLib:MakeWindow({Name = "Awesome Hub | MM2", HidePremium = false, SaveConfig = true, ConfigFolder = "DeltaMM2"})
 
-local Window = OrionLib:MakeWindow({Name = "Awesome Hub MM2", HidePremium = false, SaveConfig = true, ConfigFolder = "OrionTest"})
-
-local Tab = Window:MakeTab({
+local MainTab = Window:MakeTab({
 	Name = "Main",
 	Icon = "rbxassetid://4483345998",
 	PremiumOnly = false
 })
 
-Tab:AddSlider({
-	Name = "Speed",
+MainTab:AddSlider({
+	Name = "WalkSpeed",
 	Min = 16,
 	Max = 250,
 	Default = 16,
 	Color = Color3.fromRGB(255,255,255),
 	Increment = 1,
-	ValueName = "spd",
+	ValueName = "Speed",
 	Callback = function(Value)
 		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
 	end    
 })
 
-Tab:AddButton({
+MainTab:AddButton({
 	Name = "ESP Players",
 	Callback = function()
         for _, v in pairs(game.Players:GetPlayers()) do
             if v ~= game.Players.LocalPlayer and v.Character then
                 if not v.Character:FindFirstChild("Highlight") then
-                    Instance.new("Highlight", v.Character)
+                    local hl = Instance.new("Highlight", v.Character)
+                    hl.FillTransparency = 0.5
                 end
+            end
+        end
+	end    
+})
+
+MainTab:AddButton({
+	Name = "Check Murderer",
+	Callback = function()
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Backpack:FindFirstChild("Knife") or (v.Character and v.Character:FindFirstChild("Knife")) then
+                OrionLib:MakeNotification({
+                    Name = "Murderer Found!",
+                    Content = v.Name .. " is the killer!",
+                    Time = 5
+                })
             end
         end
 	end    
