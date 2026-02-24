@@ -1,14 +1,10 @@
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu'))()
 
 local Window = Rayfield:CreateWindow({
    Name = "Awesome Hub MM2",
    LoadingTitle = "Loading...",
    LoadingSubtitle = "by Awesome Crack",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = "AwesomeHubData",
-      FileName = "Config"
-   },
+   ConfigurationSaving = {Enabled = true, FolderName = "AwesomeHubData", FileName = "Config"},
    KeySystem = false
 })
 
@@ -16,13 +12,11 @@ local Tab = Window:CreateTab("Main", nil)
 
 Tab:CreateSection("Movement")
 Tab:CreateSlider({
-   Name = "WalkSpeed",
+   Name = "Speed",
    Range = {16, 200},
    Increment = 1,
    CurrentValue = 16,
-   Callback = function(Value)
-      game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
-   end,
+   Callback = function(Value) game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value end,
 })
 
 Tab:CreateSection("Game")
