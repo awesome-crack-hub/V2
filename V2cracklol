@@ -1,1 +1,32 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Awesome Hub",
+   LoadingTitle = "Loading...",
+   LoadingSubtitle = "by Awesome Crack",
+   KeySystem = false
+})
+
+local Tab = Window:CreateTab("Main", nil)
+
+Tab:CreateSlider({
+   Name = "WalkSpeed",
+   Range = {16, 200},
+   Increment = 1,
+   CurrentValue = 16,
+   Callback = function(Value)
+      game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+   end,
+})
+
+Tab:CreateButton({
+   Name = "ESP",
+   Callback = function()
+      for _, v in pairs(game.Players:GetPlayers()) do
+         if v ~= game.Players.LocalPlayer and v.Character then
+            Instance.new("Highlight", v.Character)
+         end
+      end
+   end,
+})
+
