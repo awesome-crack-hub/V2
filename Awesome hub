@@ -1,25 +1,25 @@
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "MM2 MEGA HUB | RUSSIAN EDITION",
-   LoadingTitle = "Загрузка систем MM2...",
-   LoadingSubtitle = "Подготовка интерфейса",
+   Name = "MM2 Awesome Hub V2",
+   LoadingTitle = "Executing Script...",
+   LoadingSubtitle = "by Awesome Crack Hub",
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = "MM2_Config",
-      FileName = "Settings"
+      FolderName = "AwesomeHub_MM2",
+      FileName = "Config"
    },
    Discord = {Enabled = false},
    KeySystem = false,
 })
 
-local TabMain = Window:CreateTab("🎯 Функции Игры", nil)
-local TabESP = Window:CreateTab("👁️ Визуальные", nil)
-local TabPlayer = Window:CreateTab("🏃 Игрок", nil)
+local TabMain = Window:CreateTab("Main", nil)
+local TabVisuals = Window:CreateTab("Visuals", nil)
+local TabPlayer = Window:CreateTab("Player", nil)
 
-local SectionFarm = TabMain:CreateSection("Сбор Монет")
+local SectionFarm = TabMain:CreateSection("Auto Farm")
 TabMain:CreateToggle({
-   Name = "Автоматический сбор монет",
+   Name = "Auto Collect Coins",
    CurrentValue = false,
    Callback = function(Value)
         _G.AutoFarm = Value
@@ -30,7 +30,7 @@ TabMain:CreateToggle({
                 for _, coin in pairs(Container:GetChildren()) do
                     if coin:IsA("BasePart") and _G.AutoFarm then
                         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = coin.CFrame
-                        task.wait(0.2)
+                        task.wait(0.3)
                     end
                 end
             end
@@ -38,52 +38,50 @@ TabMain:CreateToggle({
    end,
 })
 
-local SectionCombat = TabMain:CreateSection("Бой")
+local SectionRoles = TabMain:CreateSection("Game Status")
 TabMain:CreateButton({
-   Name = "Тихий Аимбот (Шериф)",
-   Callback = function()
-        loadstring(game:HttpGet("https://raw.githubusercontent.com"))()
-   end,
-})
-
-local SectionESP = TabESP:CreateSection("Подсветка")
-TabESP:CreateToggle({
-   Name = "Подсветить всех игроков",
-   CurrentValue = false,
-   Callback = function(Value)
-        for _, v in pairs(game.Players:GetPlayers()) do
-            if v ~= game.Players.LocalPlayer and v.Character then
-                if Value then
-                    local Highlight = Instance.new("Highlight", v.Character)
-                    Highlight.Name = "ESP_Highlight"
-                    Highlight.FillColor = Color3.fromRGB(255, 255, 255)
-                else
-                    if v.Character:FindFirstChild("ESP_Highlight") then
-                        v.Character.ESP_Highlight:Destroy()
-                    end
-                end
-            end
-        end
-   end,
-})
-
-TabESP:CreateButton({
-   Name = "Найти Убийцу и Шерифа",
+   Name = "Check Roles (Killer/Sheriff)",
    Callback = function()
         for _, v in pairs(game.Players:GetPlayers()) do
             if v.Backpack:FindFirstChild("Knife") or (v.Character and v.Character:FindFirstChild("Knife")) then
-                Rayfield:Notify({Title = "Внимание!", Content = "Убийца: " .. v.Name, Duration = 5})
+                Rayfield:Notify({Title = "FOUND", Content = "Murderer: " .. v.Name, Duration = 5})
             elseif v.Backpack:FindFirstChild("Gun") or (v.Character and v.Character:FindFirstChild("Gun")) then
-                Rayfield:Notify({Title = "Внимание!", Content = "Шериф: " .. v.Name, Duration = 5})
+                Rayfield:Notify({Title = "FOUND", Content = "Sheriff: " .. v.Name, Duration = 5})
             end
         end
    end,
 })
 
-local SectionStats = TabPlayer:CreateSection("Характеристики")
+local SectionESP = TabVisuals:CreateSection("ESP Settings")
+TabVisuals:CreateToggle({
+   Name = "Player ESP",
+   CurrentValue = false,
+   Callback = function(Value)
+        _G.ESP = Value
+        while _G.ESP do
+            for _, v in pairs(game.Players:GetPlayers()) do
+                if v ~= game.Players.LocalPlayer and v.Character and not v.Character:FindFirstChild("Highlight") then
+                    local hl = Instance.new("Highlight", v.Character)
+                    hl.FillTransparency = 0.5
+                    hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+                end
+            end
+            task.wait(1)
+            if not _G.ESP then
+                for _, v in pairs(game.Players:GetPlayers()) do
+                    if v.Character and v.Character:FindFirstChild("Highlight") then
+                        v.Character.Highlight:Destroy()
+                    end
+                end
+            end
+        end
+   end,
+})
+
+local SectionStats = TabPlayer:CreateSection("Movement")
 TabPlayer:CreateSlider({
-   Name = "Скорость бега",
-   Range = {16, 250},
+   Name = "WalkSpeed",
+   Range = {16, 200},
    Increment = 1,
    CurrentValue = 16,
    Callback = function(Value)
@@ -92,8 +90,8 @@ TabPlayer:CreateSlider({
 })
 
 TabPlayer:CreateSlider({
-   Name = "Высота прыжка",
-   Range = {50, 300},
+   Name = "JumpPower",
+   Range = {50, 250},
    Increment = 1,
    CurrentValue = 50,
    Callback = function(Value)
@@ -102,9 +100,11 @@ TabPlayer:CreateSlider({
 })
 
 TabPlayer:CreateButton({
-   Name = "Сброс персонажа",
+   Name = "Infinite Jump",
    Callback = function()
-        game.Players.LocalPlayer.Character:BreakJoints()
+        game:GetService("UserInputService").JumpRequest:Connect(function()
+            game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+        end)
    end,
 })
 
