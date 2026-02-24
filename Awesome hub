@@ -1,0 +1,111 @@
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "MM2 MEGA HUB | RUSSIAN EDITION",
+   LoadingTitle = "Загрузка систем MM2...",
+   LoadingSubtitle = "Подготовка интерфейса",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "MM2_Config",
+      FileName = "Settings"
+   },
+   Discord = {Enabled = false},
+   KeySystem = false,
+})
+
+local TabMain = Window:CreateTab("🎯 Функции Игры", nil)
+local TabESP = Window:CreateTab("👁️ Визуальные", nil)
+local TabPlayer = Window:CreateTab("🏃 Игрок", nil)
+
+local SectionFarm = TabMain:CreateSection("Сбор Монет")
+TabMain:CreateToggle({
+   Name = "Автоматический сбор монет",
+   CurrentValue = false,
+   Callback = function(Value)
+        _G.AutoFarm = Value
+        while _G.AutoFarm do
+            task.wait(0.1)
+            local Container = workspace:FindFirstChild("CoinContainer", true)
+            if Container then
+                for _, coin in pairs(Container:GetChildren()) do
+                    if coin:IsA("BasePart") and _G.AutoFarm then
+                        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = coin.CFrame
+                        task.wait(0.2)
+                    end
+                end
+            end
+        end
+   end,
+})
+
+local SectionCombat = TabMain:CreateSection("Бой")
+TabMain:CreateButton({
+   Name = "Тихий Аимбот (Шериф)",
+   Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com"))()
+   end,
+})
+
+local SectionESP = TabESP:CreateSection("Подсветка")
+TabESP:CreateToggle({
+   Name = "Подсветить всех игроков",
+   CurrentValue = false,
+   Callback = function(Value)
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v ~= game.Players.LocalPlayer and v.Character then
+                if Value then
+                    local Highlight = Instance.new("Highlight", v.Character)
+                    Highlight.Name = "ESP_Highlight"
+                    Highlight.FillColor = Color3.fromRGB(255, 255, 255)
+                else
+                    if v.Character:FindFirstChild("ESP_Highlight") then
+                        v.Character.ESP_Highlight:Destroy()
+                    end
+                end
+            end
+        end
+   end,
+})
+
+TabESP:CreateButton({
+   Name = "Найти Убийцу и Шерифа",
+   Callback = function()
+        for _, v in pairs(game.Players:GetPlayers()) do
+            if v.Backpack:FindFirstChild("Knife") or (v.Character and v.Character:FindFirstChild("Knife")) then
+                Rayfield:Notify({Title = "Внимание!", Content = "Убийца: " .. v.Name, Duration = 5})
+            elseif v.Backpack:FindFirstChild("Gun") or (v.Character and v.Character:FindFirstChild("Gun")) then
+                Rayfield:Notify({Title = "Внимание!", Content = "Шериф: " .. v.Name, Duration = 5})
+            end
+        end
+   end,
+})
+
+local SectionStats = TabPlayer:CreateSection("Характеристики")
+TabPlayer:CreateSlider({
+   Name = "Скорость бега",
+   Range = {16, 250},
+   Increment = 1,
+   CurrentValue = 16,
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+   end,
+})
+
+TabPlayer:CreateSlider({
+   Name = "Высота прыжка",
+   Range = {50, 300},
+   Increment = 1,
+   CurrentValue = 50,
+   Callback = function(Value)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
+   end,
+})
+
+TabPlayer:CreateButton({
+   Name = "Сброс персонажа",
+   Callback = function()
+        game.Players.LocalPlayer.Character:BreakJoints()
+   end,
+})
+
+Rayfield:LoadConfiguration()
